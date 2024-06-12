@@ -1,0 +1,333 @@
+{   
+    "database_metadata": [
+        {
+            "database_name": "olist",
+            "database_description": "O database Olist contém tabelas que descrevem a operação do e-commerce Olist. As informações estão organizadas em um modelo de dados onde temos uma tabela fato de pedidos e varias tabelas de dimensões que descrevem os items dos pedidos, clientes, produtos, vendedores, pagamentos e avaliações do pedidos além de permitir a geolocalização de vendedores e clientes a partir da dimensão de geolocalização."
+        }
+    ],
+    "table_metadata": [
+        {
+            "table_name": "fact_orders",
+            "table_logic_name": "Tabela fato de pedidos",
+            "database_name": "olist",
+            "table_description": "A tabela `fact_orders` contém todos os pedidos realizados na plataforma de e-commerce Olist. A tabela contém informações dos pedidos como identificação do pedido, status do pedido, data da compra, data da entrega, identificador do cliente,",
+            "table_columns": [
+                {
+                    "column_name": "order_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `order_id` é um identificador único do pedido."
+                },
+                {
+                    "column_name": "customer_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_id` é o código identificador de um cliente no pedido."
+                },
+                {
+                    "column_name": "order_status",
+                    "data_type": "string",
+                    "column_description": "A coluna `order_status` representa o estado em que o pedido se encontra no momento. O estado da compra pode ser entregue (delivered), processando (processing), cancelado (canceled), enviado (shipped), faturado (invoiced), indisponível (unavailable) e criado (created). O ciclo de vida do pedido começa quando a criação do pedido, onde ele está em estado criado (created). Em seguida o pedido vai para estado faturado (invoiced) onde é emitida a fatura para o cliente realizar o pagamento. Após o pagamento da fatura, o pedido então passa por um estado de processamento (processing) onde o pedido é separado para envio pela loja. Após processamento, o pedido entra no estado enviado (shipped) até que seja entregue pelo entregador. Após confirmação da entrega o pedido entra no estado entregue (delivered). O pedido em qualquer momento do ciclo de vida pode assumir o estado cancelado (canceled) e após o estado processando (processing) ele também pode ser marcado como indisponível (unavailable)."
+                },
+                {
+                    "column_name": "order_purchase_timestamp",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `order_purchase_timestamp` representa a data e horário da criação do pedido. É o momento que o cliente realiza a compra."
+                },
+                {
+                    "column_name": "order_approved_at",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `order_approved_at` representa a data e horário da aprovação do pedido."
+                },
+                {
+                    "column_name": "order_delivered_carrier_date",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `order_delivered_carrier_date` representa a data e horário que o pedido foi para o entregador responsável pelo frete."
+                },
+                {
+                    "column_name": "order_delivered_customer_date",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `order_delivered_customer_date` representa a data e horário que o pedido foi entregue ao cliente final."
+                },
+                {
+                    "column_name": "order_estimated_delivery_date",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `order_estimated_delivery_date` representa a data estimada da entrega do pedido para o cliente."
+                }
+            ],
+            "table_primary_key": ["order_id"]
+        },
+        {
+            "table_name": "dim_order_items",
+            "table_logic_name": "Tabela dimensão de items de pedidos",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_order_items` contém todos os items que compoem um pedido. Um pedido pode ter um ou mais items associados à ele. A tabela contem também informações relevantes como identificação do produto, identificação do vendedor, valor de venda e valor de frete do item.",
+            "table_columns": [
+                {
+                    "column_name": "order_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `order_id` é um identificador único do pedido."
+                },
+                {
+                    "column_name": "order_item_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `order_item_id` é o número sequencial do item do pedido. Cada pedido pode ter um ou mais items, cada um com um número sequencial associado."
+                },
+                {
+                    "column_name": "product_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `product_id` é um identificador único do produto."
+                },
+                {
+                    "column_name": "seller_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `seller_id` é o identificador único do vendedor."
+                },
+                {
+                    "column_name": "shipping_limit_date",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `shipping_limit_date` representa a data limite para envio do item"
+                },
+                {
+                    "column_name": "price",
+                    "data_type": "float",
+                    "column_description": "A coluna `price` é o preço do item do pedido associado ao produto."
+                },
+                {
+                    "column_name": "freight_value",
+                    "data_type": "float",
+                    "column_description": "A coluna `freght_value` é o valor do frete do item do pedido."
+                }
+            ],
+            "table_primary_key": ["order_id", "order_item_id"]
+        },
+        {
+            "table_name": "dim_sellers",
+            "table_logic_name": "Tabela dimensão de vendedores",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_sellers` contém todos os vendedores da plataforma. A tabela contem identificação do vendedor, seu prefixo de código postal (CEP), sua cidade e seu estado ou UF (Unidade Federativa). No e-commerce cada produto pode ser vendido por um vendedor distinto e cada pedido pode ter produtos de vendedores distintos.",
+            "table_columns": [
+                {
+                    "column_name": "seller_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `seller_id` é o identificador único do vendedor."
+                },
+                {
+                    "column_name": "seller_zip_code_prefix",
+                    "data_type": "string",
+                    "column_description": "A coluna `seller_zip_code_prefix` é o prefixo do código postal (CEP) do endereço do vendedor."
+                },
+                {
+                    "column_name": "seller_city",
+                    "data_type": "string",
+                    "column_description": "A coluna `seller_city` é a cidade onde o vendedor está localizado."
+                },
+                {
+                    "column_name": "seller_state",
+                    "data_type": "string",
+                    "column_description": "A coluna `seller_state` representa o estado onde o vendedor está localizado."
+                }
+            ],
+            "table_primary_key": ["seller_id"]
+        },
+        {
+            "table_name": "dim_products",
+            "table_logic_name": "Tabela dimensão de produtos",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_products` representa a dimensão produtos no e-commerce Olist. Nela são catalogados todos os produtos da plataforma do e-commerce assim como informações sobre eles como a categoria dos produtos, o peso, largura, comprimento, altura, comprimento da descrição do produto e quantidade de fotos disponíveis.",
+            "table_columns": [
+                {
+                    "column_name": "product_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `product_id` é um identificador único do produto."
+                },
+                {
+                    "column_name": "product_category_name",
+                    "data_type": "string",
+                    "column_description": "A coluna `product_category_name` é o nome da categoria do produto."
+                },
+                {
+                    "column_name": "product_name_length",
+                    "data_type": "integer",
+                    "column_description": "A coluna `product_name_length` representa o comprimento do nome do produto em número de caracteres."
+                },
+                {
+                    "column_name": "product_description_length",
+                    "data_type": "integer",
+                    "column_description": "A coluna `product_description_length` representa o comprimento da descrição do produto em número de caracteres."
+                },
+                {
+                    "column_name": "product_photos_qty",
+                    "data_type": "integer",
+                    "column_description": "A coluna `product_photos_qty` contém a quantidade de fotos que existe no anúncio do produto"
+                },
+                {
+                    "column_name": "product_weight_g",
+                    "data_type": "float",
+                    "column_description": "A coluna `product_weight` apresenta o peso em gramas do produto."
+                },
+                {
+                    "column_name": "product_length_cm",
+                    "data_type": "float",
+                    "column_description": "A coluna `product_length_cm` apresenta o comprimento do produto em centímetros."
+                },
+                {
+                    "column_name": "product_height_cm",
+                    "data_type": "float",
+                    "column_description": "A coluna `product_height_cm` apresenta a altura do produto em centímetros."
+                },
+                {
+                    "column_name": "product_width_cm",
+                    "data_type": "float",
+                    "column_description": "A coluna `product_width_cm` apresenta a largura do produto em centímetros."
+                }
+            ],
+            "table_primary_key": ["product_id"]
+        },
+        {
+            "table_name": "dim_order_reviews",
+            "table_logic_name": "Tabela dimensão de avaliações de pedidos",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_order_reviews` apresenta as avaliações dos pedidos realizados. Um pedido pode ou não ter sido avaliado. A tabela também apresenta informações como a nota dada pelo cliente, assim como comentário sobre a nota dada pelo cliente.",
+            "table_columns": [
+                {
+                    "column_name": "review_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `review_id` é o identificador da avaliação feita pelo cliente referente a um pedido."
+                },
+                {
+                    "column_name": "order_id",
+                    "data_type": "string",
+                    "column_description":"A coluna `order_id` é um identificador único do pedido."
+                },
+                {
+                    "column_name": "review_score",
+                    "data_type": "integer",
+                    "column_description": "A coluna `review_score` é a nota que o cliente tá ao avaliar um pedido. A nota pode ir de 0 até 5 sendo 0 a pior avaliação e 5 a melhor a valiação"
+                },
+                {
+                    "column_name": "review_comment_title",
+                    "data_type": "string",
+                    "column_description": "A coluna `review_comment_title` apresenta o título que o cliente deu à avaliação que fez para um determinado pedido."
+                },
+                {
+                    "column_name": "review_comment_message",
+                    "data_type": "string",
+                    "column_description": "A coluna `review_comment_message` apresenta a avaliação que o cliente escreveu sobre seu pedido de fato. É onde ele escreve suas opiniões e sensações, insatisfações ou satisfações com relação ao pedido realizado."
+                },
+                {
+                    "column_name": "review_creation_date",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `review_creation_date` é a data e hora que o cliente realizou a avaliação do pedido."
+                },
+                {
+                    "column_name": "review_answer_timestamp",
+                    "data_type": "timestamp",
+                    "column_description": "A coluna `review_ansqer_timestamp` é a data e hora que o vendedor respondeu a avaliação do ciente."
+                }
+            ],
+            "table_primary_key": ["review_id", "order_id"]
+        },
+        {
+            "table_name": "dim_order_payments",
+            "table_logic_name": "Tabela dimensão de pagamentos de pedidos",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_order_payments` apresenta informações sobre os pagamentos dos pedidos realizados pelos clientes. A tabela apresenta informações sobre as parcelas do pagamento, o tipo de pagamento e o valor pago pelo cliente. Cada pedido pode ter vários pagamentos associados à ele.",
+            "table_columns": [
+                {
+                    "column_name": "order_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `order_id` é um identificador único do pedido."
+                },
+                {
+                    "column_name": "payment_sequential",
+                    "data_type": "integer",
+                    "column_description": "A coluna `payment_sequential` contém as parcelas do pagamento de um pedido. A soma do valor de pagamento associado a cada parcela de um pedido equivale ao valor total do pedido."
+                },
+                {
+                    "column_name": "payment_type",
+                    "data_type": "string",
+                    "column_description": "A coluna `payment_type` representa o tipo de pagamento realizado pelo cliente. O tipo de pagamento pode ser via boleto (boleto), cartão de crédito (credit_card), voucher (voucher), débito (debit_card) ou não definido (not_defined)"
+                },
+                {
+                    "column_name": "payment_installments",
+                    "data_type": "integer",
+                    "column_description": "A coluna `payment_installments` descreve em quantas vezes foi parcelado o pagamento caso o pagamento tenha sido realizado via cartão de crédito (credit_card)."
+                },
+                {
+                    "column_name": "payment_value",
+                    "data_type": "float",
+                    "column_description": "A coluna `payment_value` é o valor associado ao pagamento em reais."
+                }
+            ],
+            "table_primary_key": ["order_id", "payment_sequential"]
+        },
+        {
+            "table_name": "dim_geolocation",
+            "table_logic_name": "Tabela dimensão de geolocalização",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_geolocation` apresenta dados de geolocalização para auxiliar na localização de vendedores e clientes. A tabela apresenta pontos de latitude e longitude para vários prefixos de código posta (CEP) assim como a cidade e estado associado à esses pontos. Os pontos associados a cada código postal compoem uma determinada geometria da região.",
+            "table_columns": [
+                {
+                    "column_name": "geolocation_zip_code_prefix",
+                    "data_type": "string",
+                    "column_description": "A coluna `geolocation_zip_code_prefix` apresenta o prefixo de código postal (CEP) de um ponto de geolocalização."
+                },
+                {
+                    "column_name": "geolocation_lat",
+                    "data_type": "double",
+                    "column_description": "A coluna `geolocation_lat` contém a latitude de um ponto associado à um código postal (CEP). "
+                },
+                {
+                    "column_name": "geolocation_lng",
+                    "data_type": "double",
+                    "column_description": "A coluna `geolocation_lng` contém a longitudo de um ponto associado à um código postal (CEP)."
+                },
+                {
+                    "column_name": "geolocation_city",
+                    "data_type": "string",
+                    "column_description": "A coluna `geolocation_city` apresenta a cidade associada ao prefixo de código postal (CEP)."
+                },
+                {
+                    "column_name": "geolocation_state",
+                    "data_type": "string",
+                    "column_description": "A coluna `geolocation_state` apresenta o estado ou UF (Unidade Federativa) associada ao prefixo de código postal (CEP)."
+                }
+            ],
+            "table_primary_key": ["geolocation_zip_code_prefix", "geolocation_lat", "geolocation_lng"]
+
+        },
+        {
+            "table_name": "dim_customers",
+            "table_logic_name": "Tabela dimensão de clientes",
+            "database_name": "olist",
+            "table_description": "A tabela `dim_customers` contém informações dos clientes do e-commerce Olist. A tabela contém informações como código indentificador do cliente, prefixo do código postal (CEP) além de cidade e estado ou UF (unidade federativa) de residência.",
+            "table_columns": [
+                {
+                    "column_name": "customer_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_id` é o código identificador de um cliente no pedido."
+                },
+                {
+                    "column_name": "customer_unique_id",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_unique_id` é o identificação univarsal do cliente. Um cliente especifico pode ter apresentar diversos customer_id em diversos pedidos, mas apenas um customer_unique_id."
+                },
+                {
+                    "column_name": "customer_zip_code_prefix",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_zip_code_prefix` representa o prefixo do código postal (CEP) de onde do endereço ou localização do cliente."
+                },
+                {
+                    "column_name": "customer_city",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_city` é a cidade do endereço ou localização do cliente."
+                },
+                {
+                    "column_name": "customer_state",
+                    "data_type": "string",
+                    "column_description": "A coluna `customer_state` é o estado do endereço ou localização do cliente."
+                }
+            ],
+            "table_primary_key": ["customer_id"]
+        }
+    ]
+}
