@@ -1,5 +1,5 @@
 from langchain_community.graphs import Neo4jGraph
-from src.graph_vector_config import GraphVectorConfig
+from src.utils.graph_vector_config import GraphVectorConfig
 
 class GraphQueryEngine():
 

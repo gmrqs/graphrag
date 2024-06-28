@@ -1,5 +1,9 @@
 from src.agents.sql_agent.sql_agent import sql_agent
+from langchain_core.messages import HumanMessage
 
-response = sql_agent.invoke("Qual categoria de produto que mais vendeu em 2018?")
+
+prompt = "Qual categoria de produto que mais vendeu em 2018?"
+
+response = sql_agent.invoke(input=prompt)
 
 print(response)

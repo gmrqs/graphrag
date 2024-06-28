@@ -1,6 +1,6 @@
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
-from src.graph_vector_retriever import GraphVectorRetriever
-from src.sql_agent.build_context import build_context
+from src.utils.graph_vector_retriever import GraphVectorRetriever
+from src.agents.sql_agent.build_context import build_context
 
 retriever = GraphVectorRetriever().get_retriever()
 
